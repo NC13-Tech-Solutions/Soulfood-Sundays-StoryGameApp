@@ -1,0 +1,23 @@
+.full-image-container
+  height: 100vh
+  background-position: center
+  background-size: cover
+  margin: 0
+
+// Animation
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animation
+  animation-timing-function: ease-in
+  animation-duration: 1s
+  .top-to-bottom
+    animation-name: slideInFromTop
