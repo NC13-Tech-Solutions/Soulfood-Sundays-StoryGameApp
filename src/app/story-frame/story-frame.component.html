@@ -1,3 +1,42 @@
 <div #imageFrame class="full-image-container">
-  <button (click)="playOrPauseMusic()" [textContent]="audioText"></button>
+  @for (fElem of storyInput.elements; track $index) {
+  <img
+    [src]="getImageSrc(fElem.src)"
+    [style]="getStyleData(fElem)"
+    [className]="fElem.classes"
+    [ngClass]="{'clickable': booleanForImg(fElem.isStoryLink,fElem.storyLinkViewed)}"
+    alt="Image not loaded properly"
+    (click)="fElem.isStoryLink ? goToLinkedFrame(fElem.storyLinkedFrame,$index) : null"
+  />
+  }
+  <div class="btn-container">
+    <button
+      mat-fab
+      color="primary"
+      (click)="goToPrevFrame()"
+      matTooltip="Click to go to Previous Frame"
+    >
+      <mat-icon>skip_previous</mat-icon>
+    </button>
+    <button
+      mat-fab
+      color="primary"
+      (click)="playOrPauseMusic()"
+      [matTooltip]="'Click to ' + audioText + ' music'"
+    >
+      @if(audioText == 'PAUSE'){
+      <mat-icon>music_note</mat-icon>
+      }@else{
+      <mat-icon>music_off</mat-icon>
+      }
+    </button>
+    <button
+      mat-fab
+      color="primary"
+      (click)="goToNextFrame()"
+      matTooltip="Click to go to Next Frame"
+    >
+      <mat-icon>skip_next</mat-icon>
+    </button>
+  </div>
 </div>

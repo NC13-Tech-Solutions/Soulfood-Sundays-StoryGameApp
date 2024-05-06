@@ -1,1 +1,3 @@
-<app-story-frame></app-story-frame>
+@if (storyDataService.getFrame(curFrame); as sFrame) {
+  <app-story-frame [storyInput]="storyDataService.getFrame(curFrame)" (frameChange)="nextFrame($event)"></app-story-frame>
+}

@@ -2,24 +2,38 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  Input,
   OnInit,
+  Output,
   ViewChild,
+  output,
 } from '@angular/core';
+import { StoryImage } from '../shared/models/story-image.model';
+import { StoryImageElement } from '../shared/models/story-image-element.model';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { FrameTransition } from '../shared/models/frame-transition.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-story-frame',
   standalone: true,
-  imports: [],
+  imports: [MatButtonModule, MatIconModule, MatTooltipModule, CommonModule],
   templateUrl: './story-frame.component.html',
   styleUrl: './story-frame.component.sass',
 })
 export class StoryFrameComponent implements OnInit, AfterViewInit {
+  @Input('storyInput') storyInput!: StoryImage;
+  frameChange = output<FrameTransition>();
   @ViewChild('imageFrame') imageFrameElementRef:
     | ElementRef<HTMLDivElement>
     | undefined;
   private imageFrameRef: HTMLDivElement | undefined;
   private audio = new Audio();
   audioText: 'PLAY' | 'PAUSE' = 'PLAY';
+  oneSecDelay = false;
+
   ngOnInit(): void {
     this.loadMusic('Frag Out Voice Lines - Apex Legends.mp3');
     this.audioEventListeners();
@@ -27,8 +41,11 @@ export class StoryFrameComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     if (this.imageFrameElementRef) {
       this.imageFrameRef = this.imageFrameElementRef.nativeElement;
-      this.loadBgImage('KMOTR.png');
+      this.loadBgImage(this.storyInput.backgroundSrc);
     }
+    setTimeout(() => {
+      this.oneSecDelay = true;
+    }, 1500);
   }
 
   loadMusic(file: string): void {
@@ -37,7 +54,20 @@ export class StoryFrameComponent implements OnInit, AfterViewInit {
 
   loadBgImage(file: string): void {
     if (this.imageFrameRef)
-      this.imageFrameRef.style.backgroundImage = `url('assets/img/${file}')`;
+      this.imageFrameRef.style.backgroundImage = `url('${this.getImageSrc(
+        file
+      )}')`;
+  }
+
+  booleanForImg(isStoryLink: boolean, storyLinkViewed: boolean): boolean {
+    if(isStoryLink && !storyLinkViewed && this.oneSecDelay){
+      return true;
+    }
+    return false;
+  }
+
+  getImageSrc(file: string): string {
+    return `assets/img/${file}`;
   }
 
   playOrPauseMusic(): void {
@@ -64,6 +94,38 @@ export class StoryFrameComponent implements OnInit, AfterViewInit {
     this.audio.addEventListener('pause', () => {
       this.audioText = 'PLAY';
       console.log('Audio paused');
+    });
+  }
+
+  getStyleData(data: StoryImageElement): string {
+    return `position: absolute; top: ${data.yPos}; left: ${data.xPos}; height: ${data.height}; width: ${data.width};`;
+  }
+
+  goToNextFrame(): void {
+    this.frameChange.emit({
+      framePos: this.storyInput.nextFrame,
+      isLinkedFrame: false,
+      frameElementVal: 0,
+    });
+  }
+
+  goToPrevFrame(): void {
+    this.frameChange.emit({
+      framePos: this.storyInput.prevFrame,
+      isLinkedFrame: false,
+      frameElementVal: 0,
+    });
+  }
+
+  goToLinkedFrame(framePos: number, frameElementVal: number): void {
+    console.log(
+      `Linked frame pos: ${framePos} and frame element pos: ${frameElementVal}`
+    );
+
+    this.frameChange.emit({
+      framePos: framePos,
+      isLinkedFrame: true,
+      frameElementVal: frameElementVal,
     });
   }
 }

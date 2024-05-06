@@ -1,4 +1,40 @@
 /* You can add global styles to this file, and also import other style files */
 html,body
+  height: 100%
+  width: 100%
   overflow: hidden !important
   margin: 0
+
+// Animation
+@mixin x-y-keyframes-gen($name,$startTVal,$stopTVal,$startOVal,$stopOVal,$direction)
+  @if $direction == 'y'
+    @keyframes #{$name}
+      from
+        transform: translateY($startTVal)
+        opacity: $startOVal
+      to
+        transform: translateY($stopTVal)
+        opacity: $stopOVal
+  @else //direction = 'x'
+    @keyframes #{$name}
+      from
+        transform: translateX($startTVal)
+        opacity: $startOVal
+      to
+        transform: translateX($stopTVal)
+        opacity: $stopOVal
+
+@include x-y-keyframes-gen(slideInFromTop,-100%,0,0,1,'y')
+@include x-y-keyframes-gen(slideInFromLeft,-100%,0,0,1,'x')
+@include x-y-keyframes-gen(slideInFromRight,100%,0,0,1,'x')
+
+.animation
+  animation-timing-function: ease-in
+  animation-duration: 1s
+  &.top-to-bottom
+    animation-name: slideInFromTop
+    animation-fill-mode: forwards
+  &.left-to-right
+    animation-name: slideInFromLeft
+  &.right-to-left
+    animation-name: slideInFromRight

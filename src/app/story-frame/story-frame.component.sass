@@ -1,23 +1,46 @@
 .full-image-container
-  height: 100vh
+  height: 100%
+  width: 100%
   background-position: center
   background-size: cover
   margin: 0
 
-// Animation
-@keyframes slideInFromTop {
-  from {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
+  .btn-container
+    z-index: 99
+    position: absolute
+    bottom: 5%
+    right: 2%
+    button
+      position: relative
+      &:first-child
+        margin-right: 10px
+      &:last-child
+        margin-left: 10px
 
-.animation
-  animation-timing-function: ease-in
-  animation-duration: 1s
-  .top-to-bottom
-    animation-name: slideInFromTop
+.clickable
+  border-radius: 10%
+  background-color: #f5f35d
+  background-size: auto
+  animation: glow 0.9s infinite alternate
+
+@keyframes glow
+  10%
+    background-color: #f5f35de6
+  20%
+    background-color: #f5f35dcd
+  30%
+    background-color: #f5f35db3
+  40%
+    background-color: #f5f35d9a
+  50%
+    background-color: #f5f25d80
+  60%
+    background-color: #f5f25d66
+  70%
+    background-color: #f5f25d4d
+  80%
+    background-color: #f5f25d33
+  90%
+    background-color: #f5f25d1a
+  100%
+    background-color: #f5f25d00
