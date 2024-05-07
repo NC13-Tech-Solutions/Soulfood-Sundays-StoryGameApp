@@ -1,12 +1,20 @@
-<div #imageFrame class="full-image-container">
+<div
+  #imageFrame
+  class="full-image-container"
+  [ngClass]="{'animation out-to-left': leftTransition,'animation out-to-right': rightTransition }"
+>
   @for (fElem of storyInput.elements; track $index) {
   <img
     [src]="getImageSrc(fElem.src)"
     [style]="getStyleData(fElem)"
-    [className]="fElem.classes"
-    [ngClass]="{'clickable': booleanForImg(fElem.isStoryLink,fElem.storyLinkViewed)}"
+    [className]="onTransition ? '' : fElem.classes"
+    [ngClass]="{
+      clickable: booleanForImg(fElem.isStoryLink, fElem.storyLinkViewed)
+    }"
     alt="Image not loaded properly"
-    (click)="fElem.isStoryLink ? goToLinkedFrame(fElem.storyLinkedFrame,$index) : null"
+    (click)="
+      fElem.isStoryLink ? goToLinkedFrame(fElem.storyLinkedFrame, $index) : null
+    "
   />
   }
   <div class="btn-container">

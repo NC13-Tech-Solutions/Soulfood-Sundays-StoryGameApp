@@ -15,7 +15,7 @@ html,body
       to
         transform: translateY($stopTVal)
         opacity: $stopOVal
-  @else //direction = 'x'
+  @else
     @keyframes #{$name}
       from
         transform: translateX($startTVal)
@@ -27,6 +27,8 @@ html,body
 @include x-y-keyframes-gen(slideInFromTop,-100%,0,0,1,'y')
 @include x-y-keyframes-gen(slideInFromLeft,-100%,0,0,1,'x')
 @include x-y-keyframes-gen(slideInFromRight,100%,0,0,1,'x')
+@include x-y-keyframes-gen(slideOutToLeft,0,-100%,1,0.1,'x')
+@include x-y-keyframes-gen(slideOutToRight,0,100%,1,0.1,'x')
 
 .animation
   animation-timing-function: ease-in
@@ -38,3 +40,7 @@ html,body
     animation-name: slideInFromLeft
   &.right-to-left
     animation-name: slideInFromRight
+  &.out-to-left
+    animation-name: slideOutToLeft
+  &.out-to-right
+    animation-name: slideOutToRight

@@ -4,7 +4,6 @@ import {
   ElementRef,
   Input,
   OnInit,
-  Output,
   ViewChild,
   output,
 } from '@angular/core';
@@ -33,6 +32,10 @@ export class StoryFrameComponent implements OnInit, AfterViewInit {
   private audio = new Audio();
   audioText: 'PLAY' | 'PAUSE' = 'PLAY';
   oneSecDelay = false;
+  onTransition = false;
+  leftTransition = false;
+  rightTransition = false;
+  nextFrameTransition = false;
 
   ngOnInit(): void {
     this.loadMusic('Frag Out Voice Lines - Apex Legends.mp3');
@@ -43,9 +46,7 @@ export class StoryFrameComponent implements OnInit, AfterViewInit {
       this.imageFrameRef = this.imageFrameElementRef.nativeElement;
       this.loadBgImage(this.storyInput.backgroundSrc);
     }
-    setTimeout(() => {
-      this.oneSecDelay = true;
-    }, 1500);
+    this.start1secDelay();
   }
 
   loadMusic(file: string): void {
@@ -60,7 +61,7 @@ export class StoryFrameComponent implements OnInit, AfterViewInit {
   }
 
   booleanForImg(isStoryLink: boolean, storyLinkViewed: boolean): boolean {
-    if(isStoryLink && !storyLinkViewed && this.oneSecDelay){
+    if (isStoryLink && !storyLinkViewed && this.oneSecDelay) {
       return true;
     }
     return false;
@@ -102,18 +103,26 @@ export class StoryFrameComponent implements OnInit, AfterViewInit {
   }
 
   goToNextFrame(): void {
-    this.frameChange.emit({
-      framePos: this.storyInput.nextFrame,
-      isLinkedFrame: false,
-      frameElementVal: 0,
+    this.leftTransition = true;
+    this.startFrameTransition(() => {
+      this.leftTransition = false;
+      this.frameChange.emit({
+        framePos: this.storyInput.nextFrame,
+        isLinkedFrame: false,
+        frameElementVal: 0,
+      });
     });
   }
 
   goToPrevFrame(): void {
-    this.frameChange.emit({
-      framePos: this.storyInput.prevFrame,
-      isLinkedFrame: false,
-      frameElementVal: 0,
+    this.rightTransition = true;
+    this.startFrameTransition(() => {
+      this.rightTransition = false;
+      this.frameChange.emit({
+        framePos: this.storyInput.prevFrame,
+        isLinkedFrame: false,
+        frameElementVal: 0,
+      });
     });
   }
 
@@ -121,11 +130,34 @@ export class StoryFrameComponent implements OnInit, AfterViewInit {
     console.log(
       `Linked frame pos: ${framePos} and frame element pos: ${frameElementVal}`
     );
+    this.leftTransition = true;
 
-    this.frameChange.emit({
-      framePos: framePos,
-      isLinkedFrame: true,
-      frameElementVal: frameElementVal,
+    this.startFrameTransition(() => {
+      this.leftTransition = false;
+      this.frameChange.emit({
+        framePos: framePos,
+        isLinkedFrame: true,
+        frameElementVal: frameElementVal,
+      });
     });
+  }
+
+  startFrameTransition(callback: () => void): void {
+    console.log('Started frame Transition');
+
+    this.onTransition = true;
+    setTimeout(() => {
+      console.log('Transition complete');
+      this.start1secDelay();
+      this.onTransition = false;
+      callback();
+    }, 1000);
+  }
+
+  start1secDelay(): void {
+    this.oneSecDelay = false;
+    setTimeout(() => {
+      this.oneSecDelay = true;
+    }, 1200);
   }
 }
