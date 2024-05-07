@@ -17,7 +17,7 @@
     "
   />
   }
-  <div class="btn-container">
+  <div class="btn-container" [ngClass]="{'hidden': onTransition}">
     <button
       mat-fab
       color="primary"

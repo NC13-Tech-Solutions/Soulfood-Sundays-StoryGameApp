@@ -17,6 +17,17 @@
         margin-right: 10px
       &:last-child
         margin-left: 10px
+    &.hidden
+      animation: vanish 1s normal
+
+@keyframes vanish
+  0%
+    opacity: 1
+  30%
+    opacity: 0
+  100%
+    opacity: 0
+
 
 .clickable
   animation: glow 3s infinite alternate
