@@ -1,3 +1,4 @@
+@use 'sass:math'
 .full-image-container
   height: 100%
   width: 100%
@@ -16,31 +17,23 @@
         margin-right: 10px
       &:last-child
         margin-left: 10px
-
+        
 .clickable
-  border-radius: 10%
-  background-color: #f5f35d
-  background-size: auto
-  animation: glow 0.9s infinite alternate
+  animation: glow 3s infinite alternate
+// Glow variables
+$small-radius: 10px
+$big-radius: 20px
+$base-glow-color: #fffb00
+$small-glow-color: #ffbb00
+$steps: 11 // Number of steps (including 0% and 100%)
 
 @keyframes glow
-  10%
-    background-color: #f5f35de6
-  20%
-    background-color: #f5f35dcd
-  30%
-    background-color: #f5f35db3
-  40%
-    background-color: #f5f35d9a
-  50%
-    background-color: #f5f25d80
-  60%
-    background-color: #f5f25d66
-  70%
-    background-color: #f5f25d4d
-  80%
-    background-color: #f5f25d33
-  90%
-    background-color: #f5f25d1a
-  100%
-    background-color: #f5f25d00
+  @for $i from 0 through ($steps - 1)
+    $percent: math.div($i, ($steps - 1))
+    $percentage: percentage($percent)
+    $radius: if($i % 2 == 0, $small-radius, $big-radius)
+    $color: if($i % 2 == 0, $small-glow-color, $base-glow-color)
+
+    #{$percentage}
+      filter: drop-shadow(0 0 #{$radius} #{$color})
+
