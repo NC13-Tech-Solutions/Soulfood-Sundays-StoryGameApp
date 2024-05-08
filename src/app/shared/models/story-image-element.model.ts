@@ -1,11 +1,6 @@
-export interface StoryImageElement {
-  src: string;
-  classes: string;
-  styles: string;
-  width: string;
-  height: string;
-  xPos: string;
-  yPos: string;
+import { BasicElementData } from "./basic-element-data.model";
+
+export interface StoryImageElement extends BasicElementData{
   isStoryLink: boolean;
   storyLinkedFrame: number;
   storyLinkViewed: boolean;

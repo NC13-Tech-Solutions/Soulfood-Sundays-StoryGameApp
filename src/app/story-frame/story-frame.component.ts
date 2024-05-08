@@ -67,6 +67,12 @@ export class StoryFrameComponent implements OnInit, AfterViewInit {
     return false;
   }
 
+  booleanForElementAnimation(): boolean {
+    if (this.onTransition) return false;
+    if (this.oneSecDelay) return false;
+    return true;
+  }
+
   getImageSrc(file: string): string {
     return `assets/img/${file}`;
   }
@@ -103,27 +109,46 @@ export class StoryFrameComponent implements OnInit, AfterViewInit {
   }
 
   goToNextFrame(): void {
-    this.leftTransition = true;
-    this.startFrameTransition(() => {
-      this.leftTransition = false;
+    const genFunc = () => {
       this.frameChange.emit({
         framePos: this.storyInput.nextFrame,
         isLinkedFrame: false,
         frameElementVal: 0,
+        nextIsGame: this.storyInput.nextGameIs,
       });
-    });
+    };
+
+    if (this.storyInput.shouldTransition) {
+      this.leftTransition = true;
+      this.startFrameTransition(() => {
+        this.leftTransition = false;
+        genFunc();
+      });
+    } else {
+      this.oneSecDelay = false;
+      genFunc();
+    }
   }
 
   goToPrevFrame(): void {
-    this.rightTransition = true;
-    this.startFrameTransition(() => {
-      this.rightTransition = false;
+    const genFunc = () => {
       this.frameChange.emit({
         framePos: this.storyInput.prevFrame,
         isLinkedFrame: false,
         frameElementVal: 0,
       });
-    });
+    };
+
+    if (this.storyInput.shouldTransition) {
+      this.rightTransition = true;
+      this.startFrameTransition(() => {
+        this.rightTransition = false;
+        genFunc();
+      });
+    } else {
+      this.oneSecDelay = false;
+      genFunc();
+    }
   }
 
   goToLinkedFrame(framePos: number, frameElementVal: number): void {

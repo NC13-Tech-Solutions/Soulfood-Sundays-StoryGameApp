@@ -48,6 +48,7 @@ export class StoryDataService {
       ],
       nextFrame: 1, //TODO: This is only for testing. Change this as soon as we get the full frames
       prevFrame: 0,
+      shouldTransition: false,
     },
     {
       backgroundSrc: 'IMG_3579.PNG',
@@ -77,7 +78,7 @@ export class StoryDataService {
           yPos: '11.11%',
         },
         {
-          classes: 'animation right-to-left',
+          classes: 'animation fade-in',
           height: '18.70%',
           isStoryLink: false,
           src: 'IMG_3583.PNG',
@@ -91,8 +92,11 @@ export class StoryDataService {
       ],
       nextFrame: 1, //TODO: This is only for testing. Change this as soon as we get the full frames
       prevFrame: 0,
+      nextGameIs: 'curry',
+      shouldTransition: true,
     },
   ];
+
   constructor() {}
 
   getFrame(pos: number): StoryImage {

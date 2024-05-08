@@ -1,3 +1,4 @@
+@use 'sass:math'
 /* You can add global styles to this file, and also import other style files */
 html,body
   height: 100%
@@ -30,6 +31,12 @@ html,body
 @include x-y-keyframes-gen(slideOutToLeft,0,-100%,1,0.1,'x')
 @include x-y-keyframes-gen(slideOutToRight,0,100%,1,0.1,'x')
 
+@keyframes fadeIn
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
 .animation
   animation-timing-function: ease-in
   animation-duration: 1s
@@ -44,3 +51,32 @@ html,body
     animation-name: slideOutToLeft
   &.out-to-right
     animation-name: slideOutToRight
+  &.fade-in
+    animation-name: fadeIn
+
+.full-image-container
+  height: 100%
+  width: 100%
+  background-position: center
+  background-size: cover
+  margin: 0
+
+.clickable
+  animation: glow 3s infinite alternate
+// Glow variables
+$small-radius: 10px
+$big-radius: 20px
+$base-glow-color: #fffb00
+$small-glow-color: #ffbb00
+$steps: 11 // Number of steps (including 0% and 100%)
+
+@keyframes glow
+  @for $i from 0 through ($steps - 1)
+    $percent: math.div($i, ($steps - 1))
+    $percentage: percentage($percent)
+    $radius: if($i % 2 == 0, $small-radius, $big-radius)
+    $color: if($i % 2 == 0, $small-glow-color, $base-glow-color)
+
+    #{$percentage}
+      filter: drop-shadow(0 0 #{$radius} #{$color})
+

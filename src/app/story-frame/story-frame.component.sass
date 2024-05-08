@@ -1,11 +1,4 @@
-@use 'sass:math'
 .full-image-container
-  height: 100%
-  width: 100%
-  background-position: center
-  background-size: cover
-  margin: 0
-
   .btn-container
     z-index: 99
     position: absolute
@@ -27,23 +20,3 @@
     opacity: 0
   100%
     opacity: 0
-
-
-.clickable
-  animation: glow 3s infinite alternate
-// Glow variables
-$small-radius: 10px
-$big-radius: 20px
-$base-glow-color: #fffb00
-$small-glow-color: #ffbb00
-$steps: 11 // Number of steps (including 0% and 100%)
-
-@keyframes glow
-  @for $i from 0 through ($steps - 1)
-    $percent: math.div($i, ($steps - 1))
-    $percentage: percentage($percent)
-    $radius: if($i % 2 == 0, $small-radius, $big-radius)
-    $color: if($i % 2 == 0, $small-glow-color, $base-glow-color)
-
-    #{$percentage}
-      filter: drop-shadow(0 0 #{$radius} #{$color})

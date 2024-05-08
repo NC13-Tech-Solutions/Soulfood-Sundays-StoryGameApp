@@ -1,13 +1,16 @@
 <div
   #imageFrame
   class="full-image-container"
-  [ngClass]="{'animation out-to-left': leftTransition,'animation out-to-right': rightTransition }"
+  [ngClass]="{
+    'animation out-to-left': leftTransition,
+    'animation out-to-right': rightTransition
+  }"
 >
   @for (fElem of storyInput.elements; track $index) {
   <img
     [src]="getImageSrc(fElem.src)"
     [style]="getStyleData(fElem)"
-    [className]="onTransition ? '' : fElem.classes"
+    [className]="booleanForElementAnimation() ? fElem.classes : ''"
     [ngClass]="{
       clickable: booleanForImg(fElem.isStoryLink, fElem.storyLinkViewed)
     }"
@@ -17,7 +20,7 @@
     "
   />
   }
-  <div class="btn-container" [ngClass]="{'hidden': onTransition}">
+  <div class="btn-container" [ngClass]="{ hidden: onTransition }">
     <button
       mat-fab
       color="primary"
