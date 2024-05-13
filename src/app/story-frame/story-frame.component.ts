@@ -1,10 +1,14 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
-  Input,
   OnInit,
   ViewChild,
+  effect,
+  inject,
+  input,
   output,
 } from '@angular/core';
 import { StoryImage } from '../shared/models/story-image.model';
@@ -18,50 +22,53 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-story-frame',
   standalone: true,
+  changeDetection:ChangeDetectionStrategy.OnPush,
   imports: [MatButtonModule, MatIconModule, MatTooltipModule, CommonModule],
   templateUrl: './story-frame.component.html',
   styleUrl: './story-frame.component.sass',
 })
 export class StoryFrameComponent implements OnInit, AfterViewInit {
-  @Input('storyInput') storyInput!: StoryImage;
+  storyInput = input.required<StoryImage>();
   frameChange = output<FrameTransition>();
+  changeDetect = inject(ChangeDetectorRef);
+
   @ViewChild('imageFrame') imageFrameElementRef:
     | ElementRef<HTMLDivElement>
     | undefined;
   private imageFrameRef: HTMLDivElement | undefined;
-  private audio = new Audio();
-  audioText: 'PLAY' | 'PAUSE' = 'PLAY';
   oneSecDelay = false;
   onTransition = false;
   leftTransition = false;
   rightTransition = false;
   nextFrameTransition = false;
 
-  ngOnInit(): void {
-    this.loadMusic('Frag Out Voice Lines - Apex Legends.mp3');
-    this.audioEventListeners();
+  constructor() {
+    effect(() => {
+      this.loadBgImage(this.storyInput().backgroundSrc);
+      this.start1secDelay();
+    });
   }
+  ngOnInit(): void {
+    this.loadBgImage(this.storyInput().backgroundSrc);
+  }
+
   ngAfterViewInit(): void {
-    if (this.imageFrameElementRef) {
-      this.imageFrameRef = this.imageFrameElementRef.nativeElement;
-      this.loadBgImage(this.storyInput.backgroundSrc);
-    }
+    this.loadBgImage(this.storyInput().backgroundSrc);
     this.start1secDelay();
   }
 
-  loadMusic(file: string): void {
-    this.audio.src = `assets/audio/${file}`;
-  }
-
   loadBgImage(file: string): void {
-    if (this.imageFrameRef)
-      this.imageFrameRef.style.backgroundImage = `url('${this.getImageSrc(
-        file
-      )}')`;
+    if (this.imageFrameElementRef) {
+      this.imageFrameRef = this.imageFrameElementRef.nativeElement;
+      if (this.imageFrameRef)
+        this.imageFrameRef.style.backgroundImage = `url('${this.getImageSrc(
+          file
+        )}')`;
+    }
   }
 
   booleanForImg(isStoryLink: boolean, storyLinkViewed: boolean): boolean {
-    if (isStoryLink && !storyLinkViewed && this.oneSecDelay) {
+    if (isStoryLink && !storyLinkViewed && !this.oneSecDelay) {
       return true;
     }
     return false;
@@ -77,33 +84,6 @@ export class StoryFrameComponent implements OnInit, AfterViewInit {
     return `assets/img/${file}`;
   }
 
-  playOrPauseMusic(): void {
-    if (this.audio) {
-      if (this.audioText == 'PLAY') {
-        this.audio.play();
-      } else if (this.audioText == 'PAUSE') {
-        this.audio.pause();
-      }
-    }
-  }
-
-  audioEventListeners(): void {
-    this.audio.addEventListener('play', () => {
-      this.audioText = 'PAUSE';
-      console.log('Audio played');
-    });
-
-    this.audio.addEventListener('ended', (ev) => {
-      this.audioText = 'PLAY';
-      console.log(`Audio ended. Event = ${ev}`);
-    });
-
-    this.audio.addEventListener('pause', () => {
-      this.audioText = 'PLAY';
-      console.log('Audio paused');
-    });
-  }
-
   getStyleData(data: StoryImageElement): string {
     return `position: absolute; top: ${data.yPos}; left: ${data.xPos}; height: ${data.height}; width: ${data.width};`;
   }
@@ -111,21 +91,20 @@ export class StoryFrameComponent implements OnInit, AfterViewInit {
   goToNextFrame(): void {
     const genFunc = () => {
       this.frameChange.emit({
-        framePos: this.storyInput.nextFrame,
+        framePos: this.storyInput().nextFrame,
         isLinkedFrame: false,
         frameElementVal: 0,
-        nextIsGame: this.storyInput.nextGameIs,
+        nextIsGame: this.storyInput().nextGameIs,
       });
     };
 
-    if (this.storyInput.shouldTransition) {
+    if (this.storyInput().shouldTransition) {
       this.leftTransition = true;
       this.startFrameTransition(() => {
         this.leftTransition = false;
         genFunc();
       });
     } else {
-      this.oneSecDelay = false;
       genFunc();
     }
   }
@@ -133,56 +112,74 @@ export class StoryFrameComponent implements OnInit, AfterViewInit {
   goToPrevFrame(): void {
     const genFunc = () => {
       this.frameChange.emit({
-        framePos: this.storyInput.prevFrame,
+        framePos: this.storyInput().prevFrame,
         isLinkedFrame: false,
         frameElementVal: 0,
       });
     };
 
-    if (this.storyInput.shouldTransition) {
+    if (this.storyInput().shouldTransition) {
       this.rightTransition = true;
       this.startFrameTransition(() => {
         this.rightTransition = false;
         genFunc();
       });
     } else {
-      this.oneSecDelay = false;
       genFunc();
     }
   }
 
   goToLinkedFrame(framePos: number, frameElementVal: number): void {
-    console.log(
-      `Linked frame pos: ${framePos} and frame element pos: ${frameElementVal}`
-    );
-    this.leftTransition = true;
-
-    this.startFrameTransition(() => {
-      this.leftTransition = false;
+    const genFunc = () => {
       this.frameChange.emit({
         framePos: framePos,
         isLinkedFrame: true,
         frameElementVal: frameElementVal,
       });
-    });
+    };
+
+    if (this.storyInput().shouldTransition) {
+      this.rightTransition = true;
+      this.startFrameTransition(() => {
+        this.rightTransition = false;
+        genFunc();
+      });
+    } else {
+      genFunc();
+    }
   }
 
   startFrameTransition(callback: () => void): void {
     console.log('Started frame Transition');
 
     this.onTransition = true;
+      this.changeDetect.detectChanges();
     setTimeout(() => {
       console.log('Transition complete');
-      this.start1secDelay();
       this.onTransition = false;
+      this.changeDetect.detectChanges();
       callback();
     }, 1000);
   }
 
   start1secDelay(): void {
-    this.oneSecDelay = false;
+    this.oneSecDelay = true;
     setTimeout(() => {
-      this.oneSecDelay = true;
+      this.oneSecDelay = false;
+      this.changeDetect.detectChanges();
     }, 1200);
+  }
+
+  functionCallBasedOnLogic(
+    isStoryLink: boolean,
+    isNextButton: boolean,
+    storyLinkedFrame: number,
+    index: number
+  ): void {
+    if (isNextButton) {
+      this.goToNextFrame();
+    } else if (isStoryLink) {
+      this.goToLinkedFrame(storyLinkedFrame, index);
+    }
   }
 }

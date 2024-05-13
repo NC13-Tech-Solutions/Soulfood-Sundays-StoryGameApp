@@ -1,5 +1,8 @@
 .full-image-container
-  .btn-container
+  &.hidden
+    animation: vanish 1s normal
+
+/*   .btn-container
     z-index: 99
     position: absolute
     bottom: 5%
@@ -9,9 +12,7 @@
       &:first-child
         margin-right: 10px
       &:last-child
-        margin-left: 10px
-    &.hidden
-      animation: vanish 1s normal
+        margin-left: 10px */
 
 @keyframes vanish
   0%

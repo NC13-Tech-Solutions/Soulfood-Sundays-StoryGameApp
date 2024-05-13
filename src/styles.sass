@@ -26,6 +26,7 @@ html,body
         opacity: $stopOVal
 
 @include x-y-keyframes-gen(slideInFromTop,-100%,0,0,1,'y')
+@include x-y-keyframes-gen(slideInFromBottom,100%,0,0,1,'y')
 @include x-y-keyframes-gen(slideInFromLeft,-100%,0,0,1,'x')
 @include x-y-keyframes-gen(slideInFromRight,100%,0,0,1,'x')
 @include x-y-keyframes-gen(slideOutToLeft,0,-100%,1,0.1,'x')
@@ -40,9 +41,10 @@ html,body
 .animation
   animation-timing-function: ease-in
   animation-duration: 1s
+  &.bottom-to-top
+    animation-name: slideInFromBottom
   &.top-to-bottom
     animation-name: slideInFromTop
-    animation-fill-mode: forwards
   &.left-to-right
     animation-name: slideInFromLeft
   &.right-to-left
@@ -58,8 +60,26 @@ html,body
   height: 100%
   width: 100%
   background-position: center
-  background-size: cover
+  background-size: 100% 100%
   margin: 0
+  img
+    position: absolute
+    &.first
+      z-index: 1
+    &.second
+      z-index: 2
+    &.third
+      z-index: 3
+    &.fourth
+      z-index: 4
+    &.hide
+      animation: vanishAndHide 1s forwards
+
+@keyframes vanishAndHide
+  0%
+    opacity: 1
+  100%
+    opacity: 0
 
 .clickable
   animation: glow 3s infinite alternate
@@ -80,3 +100,18 @@ $steps: 11 // Number of steps (including 0% and 100%)
     #{$percentage}
       filter: drop-shadow(0 0 #{$radius} #{$color})
 
+.center
+  position: absolute
+  left: 50%
+  top: 50%
+  transform: translateX(-50%) translateY(-50%)
+
+.dialog-container
+  width: 100%
+  height: 100%
+  background-color: #FFF
+  h3
+    font-size: 1.875em
+    text-align: justify
+    font-weight: bold
+    color: #000

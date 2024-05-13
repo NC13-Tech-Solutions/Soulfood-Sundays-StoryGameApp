@@ -1,0 +1,51 @@
+<div class="full-image-container">
+  @if (!isStart) {
+  <img
+    src="assets/img/rain_end.gif"
+    class="overlay"
+    width="100%"
+    height="100%"
+    style="object-fit: fill"
+    alt="image not loaded"
+  />
+  } @if (isStart && !imgLoaded) {
+  <div style="width: 100%; height: 100%; position: absolute">
+    <p
+      class="center"
+      style="
+        position: absolute;
+        z-index: 2;
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: xx-large;
+      "
+    >
+      Please wait for image to load
+    </p>
+    <img
+      src="assets/img/start.png"
+      alt="image not loaded. else frame"
+      style="
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+        position: absolute;
+        z-index: 1;
+      "
+    />
+  </div>
+  } @if (imgSrc && isStart) {
+  <img
+    [src]="imgSrc"
+    width="100%"
+    height="100%"
+    style="object-fit: fill"
+    alt="image not loaded"
+    (load)="onImgLoad()"
+  />
+  } @else {
+  <img src="assets/img/start.png" alt="image not loaded. else frame" />
+  }
+</div>

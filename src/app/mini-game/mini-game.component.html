@@ -1,1 +1,18 @@
-<p>mini-game works!</p>
+<div #matchingCanvas class="full-image-container">
+  @for (fElem of gameData.elements; track $index) {
+  <img
+    [src]="getImageSrc(fElem.src)"
+    [style]="getStyleData(fElem)"
+    [className]="fElem.classes"
+    [ngClass]="{
+      clickable: fElem.id == selectedElement,
+      hide: !fElem.isActive
+    }"
+    (click)="
+      fElem.id == selectedElement ? unSelectElement() : selectElement(fElem.id)
+    "
+    alt="Image not loaded properly"
+    [hidden]="booleanForHidingImg(fElem.id,fElem.isActive)"
+  />
+  }
+</div>

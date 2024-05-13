@@ -1,0 +1,88 @@
+<div #curryCanvas class="full-image-container">
+  <!-- Masala elements -->
+  @for (me of gameData.masalaElements; track $index) {
+  <img
+    [src]="getImageSrc(me.src)"
+    [style]="getStyleData(me)"
+    [className]="me.classes"
+    alt="Image not loaded properly"
+    [ngClass]="{
+      hide: !me.isActive
+    }"
+    cdkDrag
+    (cdkDragStarted)="itemDragStarted('masala', $index, $event)"
+    (cdkDragReleased)="itemDragEnded('masala', $index, $event)"
+    [hidden]="booleanForHidingElement('masala',$index,me.isActive)"
+  />
+  }
+  <!-- Fish Element -->
+  @if (gameData.fishElement; as fe) {
+  <img
+    #fishMasalaDropZone
+    [ngClass]="{
+      clickable: fishMasalaDraggedIndex != -1}"
+    [src]="getImageSrc(fe.src)"
+    [style]="getStyleData(fe)"
+    [className]="fe.classes"
+    alt="Image not loaded properly"
+  />
+  }
+  <!-- Masala Mixing Area -->
+  @if (gameData.masalaMixingAreaElement; as mm) {
+  <img
+    #masalaDropZone
+    [ngClass]="{
+      clickable: masalaDraggedIndex != -1}"
+    [src]="getImageSrc(mm.src)"
+    [style]="getStyleData(mm)"
+    [className]="mm.classes"
+    alt="Image not loaded properly"
+  />
+  }
+  <!-- Pan -->
+  @if (gameData.panElement; as pan) {
+  <img
+    #rtcDropZone
+    [ngClass]="{
+      clickable: rtcDraggedIndex != -1}"
+    [src]="getImageSrc(pan.src)"
+    [style]="getStyleData(pan)"
+    [className]="pan.classes"
+    alt="Image not loaded properly"
+  />
+  }
+  <!-- Fish Masala -->
+  @if (gameData.fishMasala; as fm) {
+  <img
+    [src]="getImageSrc(fm.src)"
+    [style]="getStyleData(fm)"
+    [className]="fm.classes"
+    alt="Image not loaded properly"
+    cdkDrag
+    (cdkDragStarted)="itemDragStarted('fish masala', 0, $event)"
+    (cdkDragReleased)="itemDragEnded('fish masala', 0, $event)"
+    [ngClass]="{
+      hide: !fm.isActive,
+      'animation fade-in': fishMasalaLoading
+    }"
+    [hidden]="booleanForHidingElement('fish masala',0,fm.isActive)"
+  />
+  }
+  <!-- Ready To Cook Elements -->
+  @for (rtc of gameData.readyToCookElements; track $index) {
+  <img
+    [src]="getImageSrc(rtc.src)"
+    [style]="getStyleData(rtc)"
+    [className]="rtc.classes"
+    alt="Image not loaded properly"
+    cdkDrag
+    (cdkDragStarted)="itemDragStarted('ready', $index, $event)"
+    (cdkDragReleased)="itemDragEnded('ready', $index, $event)"
+    [ngClass]="{
+      hide: !rtc.isActive,
+      'animation fade-in': newRtcElementIndex == $index
+    }"
+    [hidden]="booleanForHidingElement('ready',$index,rtc.isActive)"
+  />
+  }
+</div>

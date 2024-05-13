@@ -1,8 +1,30 @@
 <div class="full-container">
-  @if (storyDataService.getFrame(curFrame); as sFrame) {
-  <app-story-frame
-    [storyInput]="storyDataService.getFrame(curFrame)"
+  <app-start-and-end
+    *ngIf="MODE == 'start'"
+    [imgSrc]="'assets/img/starting.gif'"
+    [isStart]="true"
+    (gotoMain)="startGame()"
+  ></app-start-and-end>
+  <ng-container *ngIf="MODE == 'main' || MODE == 'story'">
+    <ng-container *ngIf="storyFrame">
+      <app-story-frame
+        [storyInput]="storyFrame"
+        (frameChange)="nextFrame($event)"
+      ></app-story-frame>
+    </ng-container>
+  </ng-container>
+  <app-mini-game
+    *ngIf="MODE == 'match'"
     (frameChange)="nextFrame($event)"
-  ></app-story-frame>
-  }
+    (hintModalCall)="showHint($event.hint, $event.callback)"
+  ></app-mini-game>
+  <app-curry-game
+    *ngIf="MODE == 'curry'"
+    (frameChange)="nextFrame($event)"
+    (hintModalCall)="showHint($event.hint, $event.callback)"
+  ></app-curry-game>
+  <app-start-and-end
+    *ngIf="MODE == 'end'"
+    [isStart]="false"
+  ></app-start-and-end>
 </div>
